@@ -57,12 +57,3 @@ public class Client {
     }
 
 }
-
-// Placeholder for Preference and Profile classes
-class Preference {
-    // Fields and methods for the Preference class
-}
-
-class Profile {
-    // Fields and methods for the Profile class
-}
