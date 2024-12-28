@@ -8,50 +8,61 @@ import java.sql.ResultSet;
 import java.util.Properties;
 
 public class ConnectDB {
-
-    public static void main(String[] args) {
+    /**
+     * db커넥션 메서드
+     */
+    private Connection getConnection() throws Exception {
         Properties properties = new Properties();
-        Connection connection = null;
+        InputStream inputStream = ConnectDB.class.getResourceAsStream("/db_credentials.properties");
+        if (inputStream == null) {
+            throw new RuntimeException("Properties file not found in src folder.");
+        }
+        properties.load(inputStream);
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            // ClassLoader로 src 디렉터리 안의 파일 로드
-            InputStream inputStream = ConnectDB.class.getResourceAsStream("/db_credentials.properties");
-            if (inputStream == null) {
-                throw new RuntimeException("Properties file not found in src folder.");
-            }
-            properties.load(inputStream);
+        String dbUrl = "jdbc:mysql://localhost:3306/대학소개팅";
+        String username = properties.getProperty("db.username");
+        String password = properties.getProperty("db.password");
 
-            String username = properties.getProperty("db.username");
-            String password = properties.getProperty("db.password");
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(dbUrl, username, password);
+    }
 
-            // 데이터베이스 URL
-            String dbUrl = "jdbc:mysql://localhost:3306/대학소개팅"; // 데이터베이스 이름에 맞게 변경
+    /**
+     * insert 공통 프로필, 유저, 취미등등
+     * @Param sql 만 잘짜서 그대로 실행시키면 됌
+     *
+     */
+    public void insertExecute(String sql) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
-            // JDBC 연결
-            connection = DriverManager.getConnection(dbUrl, username, password);
+            System.out.println("Database connected successfully!");
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            System.out.println("Rows affected: " + rowsAffected);
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+
+
+    // SELECT 실행 메서드
+    public void selectExecute(String sql) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
             System.out.println("Database connected successfully!");
 
-            // SQL 실행 예제
-            String query = "SELECT * FROM users"; // 테이블 이름에 맞게 변경
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                System.out.println("User ID: " + resultSet.getInt("id"));
-                System.out.println("Username: " + resultSet.getString("username"));
+                // 유저 출력 (필드명에 맞게 수정해야댐)
+                System.out.println("User ID: " + resultSet.getInt("user_id"));
+                System.out.println("Phone: " + resultSet.getString("phone"));
             }
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
-        } finally {
-            try {
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (Exception e) {
-                System.err.println("Error closing connection: " + e.getMessage());
-            }
         }
     }
 }
