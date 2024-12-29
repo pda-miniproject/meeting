@@ -10,9 +10,10 @@ public class ProfileDTO {
     public String mbti;
     public float height;
     public float weight;
+    public String hobbyId;
 
     // Constructor
-    public ProfileDTO(String userProfileId, String userId, String collegeId, String majorId, String nickname, float rating, String gender, String mbti, float height, float weight) {
+    public ProfileDTO(String userProfileId, String userId, String collegeId, String majorId, String nickname, float rating, String gender, String mbti, float height, float weight, String hobbyId) {
         this.userProfileId = userProfileId;
         this.userId = userId;
         this.collegeId = collegeId;
@@ -23,5 +24,6 @@ public class ProfileDTO {
         this.mbti = mbti;
         this.height = height;
         this.weight = weight;
+        this.hobbyId = hobbyId;
     }
 }

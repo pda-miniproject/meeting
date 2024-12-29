@@ -10,6 +10,7 @@ public class Profile {
     private String mbti;
     private float height;
     private float weight;
+    public String hobbyId;
 
     // Constructor
     public Profile(ProfileDTO dto) {
@@ -23,12 +24,13 @@ public class Profile {
         this.mbti = dto.mbti;
         this.height = dto.height;
         this.weight = dto.weight;
+        this.hobbyId = dto.hobbyId;
     }
 
     // Insert profile into the database
     public void saveToDatabase(ConnectDB connectDB) {
-        String sql = "INSERT INTO profile (user_profile_id, user_id, college_id, major_id, nickname, rating, gender, mbti, height, weight) VALUES ('" +
-                     userProfileId + "', '" + userId + "', '" + collegeId + "', '" + majorId + "', '" + nickname + "', " + rating + ", '" + gender + "', '" + mbti + "', " + height + ", " + weight + ")";
+        String sql = "INSERT INTO profile (user_profile_id, user_id, college_id, major_id, nickname, rating, gender, mbti, height, weight, hobby_id) VALUES ('" +
+                     userProfileId + "', '" + userId + "', '" + collegeId + "', '" + majorId + "', '" + nickname + "', " + rating + ", '" + gender + "', '" + mbti + "', " + height + ", " + weight  + ", " + hobbyId+ ")";
 
         connectDB.insertExecute(sql);
     }
