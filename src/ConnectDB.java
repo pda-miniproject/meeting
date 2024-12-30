@@ -11,7 +11,7 @@ public class ConnectDB {
     /**
      * db커넥션 메서드
      */
-    private Connection getConnection() throws Exception {
+    public Connection getConnection() throws Exception {
         Properties properties = new Properties();
         InputStream inputStream = ConnectDB.class.getResourceAsStream("/db_credentials.properties");
         if (inputStream == null) {
