@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -6,6 +7,10 @@ public class Main {
 
         String sql = "";
         Scanner sc = new Scanner(System.in);
+        
+        ProfileDTO profileDTO = new ProfileDTO("1", "권은비", 60, "Female", "ENFP", 165.0f, 60.0f);
+        Profile profile = new Profile(profileDTO);
+        
         while(true) {
             System.out.println("1: 프로필입력 2: 취미입력 3: 유튜브입력 4: 선호타입입력 5: 매칭상대 조회 6: 종료");
             System.out.print("입력: ");
@@ -16,12 +21,17 @@ public class Main {
             }
             switch (command) {
                 case 1://프로필 입력
-                    sql = "Insert into user (user_id,password,phone,tier_id) values(1,'1234','010-1111',1)";//입의로 유저 생성sql 임
-                    db.insertExecute(sql);
+                    profile.saveProfileToDatabase(db);
                     break;
                 case 2://취미입력
-                    sql = "";
-                    db.insertExecute(sql);
+                	
+                	int generatedProfileId = profile.getGeneratedProfileId(db);
+                    System.out.println("생성된 user_profile_id: " + generatedProfileId);
+                    List<HobbyVO> hobbies = List.of(
+                        new HobbyVO("요리"),
+                        new HobbyVO("독서")
+                    );
+                    Profile.saveHobbiesToDatabase(db, generatedProfileId, hobbies);
                     break;
                 case 3://유튜브 입력
                     sql = "";

@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS `Tier`;
 
 -- 테이블 생성
 CREATE TABLE `User` (
-                        `user_id` INTEGER NOT NULL,
+                        `user_id` INTEGER NOT NULL AUTO_INCREMENT,
                         `password` VARCHAR(255) NOT NULL,
                         `phone` VARCHAR(255) NOT NULL,
                         `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -30,7 +30,7 @@ CREATE TABLE `User` (
 );
 
 CREATE TABLE `Tier` (
-                        `tier_id` INTEGER NOT NULL,
+                        `tier_id` INTEGER NOT NULL AUTO_INCREMENT,
                         `tier_name` VARCHAR(10) NOT NULL,
                         `min_score` INTEGER NOT NULL,
                         `max_score` INTEGER NOT NULL,
@@ -38,21 +38,21 @@ CREATE TABLE `Tier` (
 );
 
 CREATE TABLE `College` (
-                           `college_id` INTEGER NOT NULL,
+                           `college_id` INTEGER NOT NULL AUTO_INCREMENT,
                            `college_name` VARCHAR(20) NOT NULL,
                            PRIMARY KEY (`college_id`)
 );
 
 CREATE TABLE `Major` (
-                         `major_id` INTEGER NOT NULL,
+                         `major_id` INTEGER NOT NULL AUTO_INCREMENT,
                          `major_name` VARCHAR(20) NOT NULL,
                          PRIMARY KEY (`major_id`)
 );
 
 CREATE TABLE `Profile` (
-                           `user_profile_id` INTEGER NOT NULL,
+                           `user_profile_id` INTEGER NOT NULL AUTO_INCREMENT,
                            `user_id` INTEGER NOT NULL,
-                           `college_id` INTEGER NOT NULL,
+                           `college_id` INTEGER NULL,
                            `major_id` INTEGER NULL,
                            `nickname` VARCHAR(20) NOT NULL,
                            `rating` INTEGER NULL COMMENT '당근온도, 매칭 후에 남기는 리뷰',
@@ -64,7 +64,7 @@ CREATE TABLE `Profile` (
 );
 
 CREATE TABLE `TimeTable` (
-                             `timetable_id` INTEGER NOT NULL,
+                             `timetable_id` INTEGER NOT NULL AUTO_INCREMENT,
                              `user_id` INTEGER NOT NULL,
                              `term` VARCHAR(20) NULL,
                              `day` VARCHAR(20) NOT NULL,
@@ -74,14 +74,14 @@ CREATE TABLE `TimeTable` (
 );
 
 CREATE TABLE `YoutubeSubscription` (
-                                       `subscription_id` INTEGER NOT NULL,
+                                       `subscription_id` INTEGER NOT NULL AUTO_INCREMENT,
                                        `channel_name` VARCHAR(50) NOT NULL,
                                        `user_id` INTEGER NOT NULL,
                                        PRIMARY KEY (`subscription_id`)
 );
 
 CREATE TABLE `Preference` (
-                              `preference_id` INTEGER NOT NULL,
+                              `preference_id` INTEGER NOT NULL AUTO_INCREMENT,
                               `user_profile_id` INTEGER NOT NULL,
                               `mbti` VARCHAR(4) NULL,
                               `height_min` INTEGER NULL,
@@ -93,20 +93,20 @@ CREATE TABLE `Preference` (
 );
 
 CREATE TABLE `Hobby` (
-                         `hobby_id` INTEGER NOT NULL,
+                         `hobby_id` INTEGER NOT NULL AUTO_INCREMENT,
                          `hobby_name` VARCHAR(30) NOT NULL,
                          PRIMARY KEY (`hobby_id`)
 );
 
 CREATE TABLE `UserHobby` (
-                             `userhobby_id` INTEGER NOT NULL,
+                             `userhobby_id` INTEGER NOT NULL AUTO_INCREMENT,
                              `hobby_id` INTEGER NOT NULL,
                              `user_profile_id` INTEGER NOT NULL,
                              PRIMARY KEY (`userhobby_id`)
 );
 
 CREATE TABLE `MatchCriteria` (
-                                 `match_score_id` INTEGER NOT NULL,
+                                 `match_score_id` INTEGER NOT NULL AUTO_INCREMENT,
                                  `user_id` INTEGER NOT NULL,
                                  `user_id2` INTEGER NOT NULL,
                                  `youtube_score` FLOAT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE `MatchCriteria` (
 );
 
 CREATE TABLE `Report` (
-                          `report_id` INTEGER NOT NULL,
+                          `report_id` INTEGER NOT NULL AUTO_INCREMENT,
                           `reported_id` INTEGER NOT NULL,
                           `reporter_id` INTEGER NOT NULL,
                           `reason` VARCHAR(100) NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE `Report` (
 );
 
 CREATE TABLE `Match` (
-                         `match_id` INTEGER NOT NULL,
+                         `match_id` INTEGER NOT NULL AUTO_INCREMENT,
                          `match_score_id` INTEGER NOT NULL,
                          `matched_at` TIMESTAMP NOT NULL,
                          `status` VARCHAR(20) NOT NULL DEFAULT "PROGRESS" COMMENT 'READY: 1,  PROGRESS: 2, COMPLETE',
@@ -134,7 +134,7 @@ CREATE TABLE `Match` (
 );
 
 CREATE TABLE `Chat` (
-                        `chat_id` INTEGER NOT NULL,
+                        `chat_id` INTEGER NOT NULL AUTO_INCREMENT,
                         `match_id` INTEGER NOT NULL,
                         `sender_id` INTEGER NOT NULL,
                         `message` VARCHAR(255) NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE `Chat` (
 );
 
 CREATE TABLE `UserActivityLog` (
-                                   `log_id` INTEGER NOT NULL,
+                                   `log_id` INTEGER NOT NULL AUTO_INCREMENT,
                                    `user_id` INTEGER NOT NULL,
                                    `activity_type` VARCHAR(10) NOT NULL COMMENT 'LOGIN, LOGOUT, MATCH_REQUEST, BLOCKED',
                                    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

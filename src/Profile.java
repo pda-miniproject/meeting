@@ -9,9 +9,8 @@ public class Profile {
     private String mbti;
     private float height;
     private float weight;
-    private List<HobbyVO> hobbies;
 
-    public Profile(ProfileDTO dto, List<HobbyVO> hobbies) {
+    public Profile(ProfileDTO dto) {
         this.userId = dto.getUserId();
         this.nickname = dto.getNickname();
         this.rating = dto.getRating();
@@ -19,54 +18,77 @@ public class Profile {
         this.mbti = dto.getMbti();
         this.height = dto.getHeight();
         this.weight = dto.getWeight();
-        this.hobbies = hobbies;
     }
 
-    public void saveToDatabase(ConnectDB connectDB) {
-        String profileSql = String.format(
-            "INSERT INTO profile (user_id, nickname, rating, gender, mbti, height, weight) VALUES ('%s', '%s', %f, '%s', '%s', %f, %f)",
-            userId, nickname, rating, gender, mbti, height, weight);
-        String hobbyCheckSqlTemplate = "SELECT hobby_id FROM hobby WHERE hobby_name = '%s'";
-        String hobbyInsertSqlTemplate = "INSERT INTO hobby (hobby_name) VALUES ('%s')";
-        String userHobbySqlTemplate = "INSERT INTO userhobby (user_profile_id, hobby_id) VALUES (%d, %d)";
-
+    public void saveProfileToDatabase(ConnectDB connectDB) {
         try {
-            // Insert profile and get generated user_profile_id
-            int generatedProfileId = connectDB.insertExecuteWithGeneratedKeys(profileSql);
-            if (generatedProfileId == 0) {
-                throw new RuntimeException("Failed to retrieve generated user_profile_id.");
-            }
-            System.out.println("Generated user_profile_id: " + generatedProfileId);
+            // Insert profile
+            String profileSql = String.format(
+                "INSERT INTO profile (user_id, nickname, rating, gender, mbti, height, weight) VALUES ('%s', '%s', %f, '%s', '%s', %f, %f)",
+                userId, nickname, rating, gender, mbti, height, weight);
+            connectDB.insertExecute(profileSql);
 
+            System.out.println("Profile saved to database.");
+        } catch (Exception e) {
+            System.err.println("Error saving profile to database: " + e.getMessage());
+        }
+    }
+
+    public int getGeneratedProfileId(ConnectDB connectDB) {
+        int generatedProfileId = 0;
+        try {
+            String selectSql = String.format("SELECT user_profile_id FROM profile WHERE user_id = '%s'", userId);
+            try (ResultSet resultSet = connectDB.selectExecuteWithResult(selectSql)) {
+                if (resultSet.next()) {
+                    generatedProfileId = resultSet.getInt("user_profile_id");
+                    System.out.println("Generated user_profile_id: " + generatedProfileId);
+                } else {
+                    throw new RuntimeException("Failed to retrieve user_profile_id for user_id: " + userId);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error retrieving user_profile_id: " + e.getMessage());
+        }
+        return generatedProfileId;
+    }
+
+    public static void saveHobbiesToDatabase(ConnectDB connectDB, int userProfileId, List<HobbyVO> hobbies) {
+        try {
             for (HobbyVO hobby : hobbies) {
                 int hobbyId = 0;
 
                 // Check if hobby exists
-                String hobbyCheckSql = String.format(hobbyCheckSqlTemplate, hobby.getHobbyName());
+                String hobbyCheckSql = String.format("SELECT hobby_id FROM hobby WHERE hobby_name = '%s'", hobby.getHobbyName());
                 try (ResultSet resultSet = connectDB.selectExecuteWithResult(hobbyCheckSql)) {
-                    if (resultSet != null && resultSet.next()) {
+                    if (resultSet.next()) {
                         hobbyId = resultSet.getInt("hobby_id");
                         System.out.println("Existing hobby_id: " + hobbyId);
                     } else {
                         // Insert new hobby
-                        String hobbyInsertSql = String.format(hobbyInsertSqlTemplate, hobby.getHobbyName());
-                        hobbyId = connectDB.insertExecuteWithGeneratedKeys(hobbyInsertSql);
-                        if (hobbyId == 0) {
-                            throw new RuntimeException("Failed to retrieve generated hobby_id.");
+                        String hobbyInsertSql = String.format("INSERT INTO hobby (hobby_name) VALUES ('%s')", hobby.getHobbyName());
+                        connectDB.insertExecute(hobbyInsertSql);
+
+                        // Get generated hobby_id
+                        try (ResultSet generatedKeys = connectDB.selectExecuteWithResult("SELECT LAST_INSERT_ID()")) {
+                            if (generatedKeys.next()) {
+                                hobbyId = generatedKeys.getInt(1);
+                                System.out.println("Generated hobby_id: " + hobbyId);
+                            }
                         }
-                        System.out.println("Generated hobby_id: " + hobbyId);
                     }
                 }
 
                 // Insert into userhobby table
-                String userHobbySql = String.format(userHobbySqlTemplate, generatedProfileId, hobbyId);
+                String userHobbySql = String.format(
+                    "INSERT INTO userhobby (user_profile_id, hobby_id) VALUES (%d, %d)",
+                    userProfileId, hobbyId);
                 connectDB.insertExecute(userHobbySql);
-                System.out.println("Inserted into user_hobby: user_profile_id=" + generatedProfileId + ", hobby_id=" + hobbyId);
+                System.out.println("Inserted into user_hobby: user_profile_id=" + userProfileId + ", hobby_id=" + hobbyId);
             }
 
-            System.out.println("Profile and hobbies saved to database.");
+            System.out.println("Hobbies saved to database.");
         } catch (Exception e) {
-            System.err.println("Error saving profile to database: " + e.getMessage());
+            System.err.println("Error saving hobbies to database: " + e.getMessage());
         }
     }
 }
