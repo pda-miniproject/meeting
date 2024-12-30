@@ -10,6 +10,7 @@ public class Main {
         
         ProfileDTO profileDTO = new ProfileDTO("1", "권은비", 60, "Female", "ENFP", 165.0f, 60.0f);
         Profile profile = new Profile(profileDTO);
+        YouTubeSubscription youTubeSubscription = new YouTubeSubscription();
         
         while(true) {
             System.out.println("1: 프로필입력 2: 취미입력 3: 유튜브입력 4: 선호타입입력 5: 매칭상대 조회 6: 종료");
@@ -21,10 +22,11 @@ public class Main {
             }
             switch (command) {
                 case 1://프로필 입력
+
                     profile.saveProfileToDatabase(db);
                     break;
                 case 2://취미입력
-                	
+
                 	int generatedProfileId = profile.getGeneratedProfileId(db);
                     System.out.println("생성된 user_profile_id: " + generatedProfileId);
                     List<HobbyVO> hobbies = List.of(
@@ -35,7 +37,14 @@ public class Main {
                     break;
                 case 3://유튜브 입력
                     sql = "";
-                    db.insertExecute(sql);
+                    sc.nextLine(); // 버퍼에 남아 있는 개행 문자 제거
+                    System.out.print("이름입력: ");
+                    String name = sc.nextLine();
+
+                    System.out.print("유튜브 이름: ");
+                    String channel = sc.nextLine();
+                    youTubeSubscription.addYoutubeSubscription(name,channel,db);
+
                     break;
                 case 4://선호타입입력
                     sql = "";
