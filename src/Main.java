@@ -10,6 +10,7 @@ public class Main {
         
         ProfileDTO profileDTO = new ProfileDTO("1", "권은비", 60, "Female", "ENFP", 165.0f, 60.0f);
         Profile profile = new Profile(profileDTO);
+        Preference preference = new Preference();
         
         while(true) {
             System.out.println("1: 프로필입력 2: 취미입력 3: 유튜브입력 4: 선호타입입력 5: 매칭상대 조회 6: 종료");
@@ -38,8 +39,25 @@ public class Main {
                     db.insertExecute(sql);
                     break;
                 case 4://선호타입입력
-                    sql = "";
-                    db.insertExecute(sql);
+                	Scanner scanner = new Scanner(System.in);
+
+                	System.out.print("이름을 입력하세요 : ");
+                	String name = scanner.nextLine();
+                	System.out.print("선호하는 mbti를 입력하세요 : ");
+                	String mbti = scanner.nextLine();
+                	System.out.print("선호하는 최소 키를 입력하세요 : ");
+                	float minHeight = scanner.nextFloat();
+                	System.out.print("선호하는 최대 키를 입력하세요 : ");
+                    float maxHeight = scanner.nextFloat();
+                    System.out.print("선호하는 최소 몸무게를 입력하세요 : ");
+                    float minWeight = scanner.nextFloat();
+                    System.out.print("선호하는 최대 몸무게를 입력하세요 : ");
+                    float maxWeight = scanner.nextFloat();
+               
+                    System.out.print("선호하는 취미를 입력하세요 : ");
+                    scanner.nextLine();
+                    String preferredHobbies = scanner.nextLine();
+                    preference.addPreference(name, mbti, minHeight, maxHeight, minWeight, maxWeight,preferredHobbies, db);
                     break;
 
                 case 5://매칭상대조회
