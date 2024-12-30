@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Profile {
 
-    public void saveProfile(ConnectDB connectDB, ProfileDTO dto) {
+    public void saveProfile(ConnectDB connectDB, ProfileVO vo) {
         int generatedProfileId = 0;
         String insertSql = "INSERT INTO profile (nickname, rating, gender, mbti, height, weight) VALUES (?, ?, ?, ?, ?, ?)";
         String updateSql = "UPDATE profile SET user_id = ? WHERE user_profile_id = ?";
@@ -15,12 +15,12 @@ public class Profile {
              PreparedStatement updateStmt = connection.prepareStatement(updateSql)) {
 
             // Insert profile
-            insertStmt.setString(1, dto.getNickname());
-            insertStmt.setFloat(2, dto.getRating());
-            insertStmt.setString(3, dto.getGender());
-            insertStmt.setString(4, dto.getMbti());
-            insertStmt.setFloat(5, dto.getHeight());
-            insertStmt.setFloat(6, dto.getWeight());
+            insertStmt.setString(1, vo.getNickname());
+            insertStmt.setFloat(2, vo.getRating());
+            insertStmt.setString(3, vo.getGender());
+            insertStmt.setString(4, vo.getMbti());
+            insertStmt.setFloat(5, vo.getHeight());
+            insertStmt.setFloat(6, vo.getWeight());
             insertStmt.executeUpdate();
 
             // Retrieve generated user_profile_id

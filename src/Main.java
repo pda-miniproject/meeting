@@ -9,7 +9,6 @@ public class Main {
         String sql = "";
         Scanner sc = new Scanner(System.in);
         
-        ProfileDTO profileDTO = new ProfileDTO("1", "권은비", 60, "Female", "ENFP", 165.0f, 60.0f);
         YouTubeSubscription youTubeSubscription = new YouTubeSubscription();
         Profile profile = new Profile();
         Match match = new Match();
@@ -46,8 +45,8 @@ public class Main {
 	                float weight = sc.nextFloat();
 	                sc.nextLine(); // Consume leftover newline character
 
-	                ProfileDTO dto = new ProfileDTO(nickname, rating, gender, mbti, height, weight);
-	                profile.saveProfile(db, dto);
+	                ProfileVO vo = new ProfileVO(nickname, rating, gender, mbti, height, weight);
+	                profile.saveProfile(db, vo);
 	                break;
 
 	            case 2: // 취미 입력
@@ -89,6 +88,6 @@ public class Main {
                     System.out.println("유효한 명령어를 입력하세요.");
             }
         }
-
+        sc.close();
     }
 }

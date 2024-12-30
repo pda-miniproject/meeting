@@ -13,8 +13,8 @@ public class Match {
 	
 	public void endMatch() {}
 	
-	public MatchDTO generateMatchReport() {
-		return new MatchDTO();
+	public MatchVO generateMatchReport() {
+		return new MatchVO();
 	}
 	public void searchMatching(String name , ConnectDB conn){
 		String getUserIdSql = "SELECT user.user_id FROM user,profile WHERE user.user_id = profile.user_id and profile.nickname = ?";
