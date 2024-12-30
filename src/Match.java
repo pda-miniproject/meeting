@@ -23,47 +23,59 @@ public class Match {
 
 
 		try (Connection connection = conn.getConnection()) {
-			// 사용자 ID 조회
-			//Integer userId = null;
-			try (PreparedStatement getUserIdStmt = connection.prepareStatement(getUserIdSql)) {
-				System.out.println("사용자 입력 이름: [" + name + "]");
-				getUserIdStmt.setString(1, name); // 사용자 이름 설정
-				try (ResultSet rs = getUserIdStmt.executeQuery()) {
-					if (rs.next()) {
-						uid = rs.getInt("user_id"); // user_id 가져오기
-						System.out.println(uid);
-					} else {
-						System.out.println("해당 이름의 사용자를 찾을 수 없습니다: " + name);
-						return;
-					}
-				}
-			}
+		    // 사용자 ID 조회
+		    try (PreparedStatement getUserIdStmt = connection.prepareStatement(getUserIdSql)) {
+		        System.out.println("사용자 입력 이름: [" + name + "]");
+		        getUserIdStmt.setString(1, name);
+		        try (ResultSet rs = getUserIdStmt.executeQuery()) {
+		            if (rs.next()) {
+		                uid = rs.getInt("user_id");
+		                System.out.println(uid);
+		            } else {
+		                System.out.println("해당 이름의 사용자를 찾을 수 없습니다: " + name);
+		                return;
+		            }
+		        }
+		    }
 
+		    // 매칭 검색 쿼리 실행
+		    String query = "SELECT DISTINCT " +
+		                   "    p.nickname, " +
+		                   "    p.user_id, " +
+		                   "    p.height, " +
+		                   "    p.weight, " +
+		                   "    p.mbti " +
+		                   "FROM Profile p " +
+		                   "JOIN Preference pref ON pref.user_profile_id = ? " +
+		                   "LEFT JOIN UserHobby uh ON uh.user_profile_id = p.user_profile_id " +
+		                   "WHERE p.gender != (SELECT gender FROM Profile WHERE user_id = ?) " +
+		                   "  AND p.height BETWEEN pref.height_min AND pref.height_max " +
+		                   "  AND p.weight BETWEEN pref.weight_min AND pref.weight_max " +
+		                   "  AND p.mbti = pref.mbti " +
+		                   "  AND uh.hobby_id = pref.hobby_id " +
+		                   "  AND p.user_id != ?";
+
+		    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+		        pstmt.setInt(1, uid);
+		        pstmt.setInt(2, uid);
+		        pstmt.setInt(3, uid);
+
+		        try (ResultSet rs = pstmt.executeQuery()) {
+		            while (rs.next()) {
+		                String nickname = rs.getString("nickname");
+		                int userId = rs.getInt("user_id");
+		                float height = rs.getFloat("height");
+		                float weight = rs.getFloat("weight");
+		                String mbti = rs.getString("mbti");
+
+		                System.out.println("매칭된 사용자: " + nickname + ", 키: " + height + ", 몸무게: " + weight + ", MBTI: " + mbti);
+		            }
+		        }
+		    }
 		} catch (Exception e) {
-			e.printStackTrace();
+		    e.printStackTrace();
 		}
-		String query = "SELECT p.nickname, u.user_id AS user_id, p.height, p.weight, p.mbti " +
-				"FROM Profile p " +
-				"JOIN User u ON p.user_id = u.user_id " +
-				"JOIN Preference pref ON pref.user_profile_id =" +uid+" "+
-				"LEFT JOIN UserHobby uh ON uh.user_profile_id = p.user_profile_id " +
-				"AND p.gender != (SELECT gender FROM profile WHERE user_id = "+uid+") " +
-				"AND p.height BETWEEN pref.height_min AND pref.height_max " +
-				"AND p.weight BETWEEN pref.weight_min AND pref.weight_max " +
-				"AND ( " +
-				"uh.hobby_id IN ( " +
-				"SELECT hobby_id " +
-				"FROM UserHobby " +
-				"WHERE user_profile_id = ( " +
-				"SELECT user_profile_id " +
-				"FROM Profile " +
-				"WHERE user_id = "+uid+" " +
-				") " +
-				") " +
-				") " +
-				"AND u.user_id != "+uid+" " +
-				"GROUP BY p.nickname, u.user_id, p.height, p.weight, p.mbti;";
-		conn.selectExecute(query);
+
 
 	}
 	
