@@ -11,6 +11,8 @@ public class Main {
         
         YouTubeSubscription youTubeSubscription = new YouTubeSubscription();
         Profile profile = new Profile();
+        Preference preference = new Preference();
+
         Match match = new Match();
 
         while(true) {
@@ -23,66 +25,88 @@ public class Main {
                 break;
             }
             switch (command) {
-	            case 1: // 프로필 입력
-	                System.out.print("Nickname: ");
-	                String nickname = sc.nextLine();
+                case 1: // 프로필 입력
+                    System.out.print("Nickname: ");
+                    String nickname = sc.nextLine();
 
-	                System.out.print("Rating (float): ");
-	                float rating = sc.nextFloat();
-	                sc.nextLine(); // Consume leftover newline character
+                    System.out.print("Rating (float): ");
+                    float rating = sc.nextFloat();
+                    sc.nextLine(); // Consume leftover newline character
 
-	                System.out.print("Gender: ");
-	                String gender = sc.nextLine();
+                    System.out.print("Gender: ");
+                    String gender = sc.nextLine();
 
-	                System.out.print("MBTI: ");
-	                String mbti = sc.nextLine();
+                    System.out.print("MBTI: ");
+                    String mbti = sc.nextLine();
 
-	                System.out.print("Height (float): ");
-	                float height = sc.nextFloat();
-	                sc.nextLine(); // Consume leftover newline character
+                    System.out.print("Height (float): ");
+                    float height = sc.nextFloat();
+                    sc.nextLine(); // Consume leftover newline character
 
-	                System.out.print("Weight (float): ");
-	                float weight = sc.nextFloat();
-	                sc.nextLine(); // Consume leftover newline character
+                    System.out.print("Weight (float): ");
+                    float weight = sc.nextFloat();
+                    sc.nextLine(); // Consume leftover newline character
 
-	                ProfileVO vo = new ProfileVO(nickname, rating, gender, mbti, height, weight);
-	                profile.saveProfile(db, vo);
-	                break;
+                    ProfileVO vo = new ProfileVO(nickname, rating, gender, mbti, height, weight);
+                    profile.saveProfile(db, vo);
+                    break;
 
-	            case 2: // 취미 입력
-	                System.out.print("Nickname for hobbies: ");
-	                String nicknameForHobbies = sc.nextLine();
+                case 2: // 취미 입력
+                    System.out.print("Nickname for hobbies: ");
+                    String nicknameForHobbies = sc.nextLine();
 
-	                int userProfileId = profile.getGeneratedProfileIdByNickname(db, nicknameForHobbies);
+                    int userProfileId = profile.getGeneratedProfileIdByNickname(db, nicknameForHobbies);
 
-	                if (userProfileId == 0) {
-	                    System.out.println("해당 Nickname으로 프로필을 찾을 수 없습니다.");
-	                    break;
-	                }
+                    if (userProfileId == 0) {
+                        System.out.println("해당 Nickname으로 프로필을 찾을 수 없습니다.");
+                        break;
+                    }
 
-	                System.out.print("취미를 입력하세요 (쉼표로 구분): ");
-	                String hobbiesInput = sc.nextLine();
-	                List<String> hobbies = new ArrayList<>();
-	                for (String hobby : hobbiesInput.split(",")) {
-	                    hobbies.add(hobby.trim());
-	                }
+                    System.out.print("취미를 입력하세요 (쉼표로 구분): ");
+                    String hobbiesInput = sc.nextLine();
+                    List<String> hobbies = new ArrayList<>();
+                    for (String hobby : hobbiesInput.split(",")) {
+                        hobbies.add(hobby.trim());
+                    }
 
-	                Profile.saveHobbies(db, userProfileId, hobbies);
-	                break;
+                    Profile.saveHobbies(db, userProfileId, hobbies);
+                    break;
                 case 3://유튜브 입력
                     sql = "";
-                    db.insertExecute(sql);
+                    sc.nextLine(); // 버퍼에 남아 있는 개행 문자 제거
+                    System.out.print("이름입력: ");
+                    String name = sc.nextLine();
+
+                    System.out.print("유튜브 이름: ");
+                    String channel = sc.nextLine();
+                    youTubeSubscription.addYoutubeSubscription(name,channel,db);
+
                     break;
                 case 4://선호타입입력
-                    sql = "";
-                    db.insertExecute(sql);
+                	Scanner scanner = new Scanner(System.in);
+                	System.out.print("이름을 입력하세요 : ");
+                	String name2 = scanner.nextLine();
+                	System.out.print("선호하는 mbti를 입력하세요 : ");
+                	String mbti2 = scanner.nextLine();
+                	System.out.print("선호하는 최소 키를 입력하세요 : ");
+                	float minHeight = scanner.nextFloat();
+                	System.out.print("선호하는 최대 키를 입력하세요 : ");
+                    float maxHeight = scanner.nextFloat();
+                    System.out.print("선호하는 최소 몸무게를 입력하세요 : ");
+                    float minWeight = scanner.nextFloat();
+                    System.out.print("선호하는 최대 몸무게를 입력하세요 : ");
+                    float maxWeight = scanner.nextFloat();
+                    System.out.print("선호하는 취미를 입력하세요 : ");
+                    scanner.nextLine();
+                    String preferredHobbies = scanner.nextLine();
+                    preference.addPreference(name2, mbti2, minHeight, maxHeight, minWeight, maxWeight,preferredHobbies, db);
                     break;
 
                 case 5://매칭상대조회
                     System.out.print("조회할 유저이름:");
-                    String name = sc.nextLine();
-                    System.out.println(name);
-                    match.searchMatching(name,db);
+                    String name1 = sc.nextLine();
+                    System.out.println(name1);
+                    match.searchMatching(name1,db);
                     break;
                 default:
                     System.out.println("유효한 명령어를 입력하세요.");
