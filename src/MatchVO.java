@@ -1,5 +1,5 @@
 
-public class MatchDTO {
+public class MatchVO {
 	private String matchId;
 	private String userId1;
 	private String userId2;

@@ -10,8 +10,8 @@ public class Match {
 	
 	public void endMatch() {}
 	
-	public MatchDTO generateMatchReport() {
-		return new MatchDTO();
+	public MatchVO generateMatchReport() {
+		return new MatchVO();
 	}
 	
 }

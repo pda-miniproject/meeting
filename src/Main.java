@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -8,31 +9,66 @@ public class Main {
         String sql = "";
         Scanner sc = new Scanner(System.in);
         
-        ProfileDTO profileDTO = new ProfileDTO("1", "권은비", 60, "Female", "ENFP", 165.0f, 60.0f);
-        Profile profile = new Profile(profileDTO);
-        Preference preference = new Preference();
+        YouTubeSubscription youTubeSubscription = new YouTubeSubscription();
+        Profile profile = new Profile();
         
+        Match match = new Match();
+
         while(true) {
             System.out.println("1: 프로필입력 2: 취미입력 3: 유튜브입력 4: 선호타입입력 5: 매칭상대 조회 6: 종료");
             System.out.print("입력: ");
             int command = sc.nextInt();
+            sc.nextLine();
 
             if(command == 6) {
                 break;
             }
             switch (command) {
-                case 1://프로필 입력
-                    profile.saveProfileToDatabase(db);
+                case 1: // 프로필 입력
+                    System.out.print("Nickname: ");
+                    String nickname = sc.nextLine();
+
+                    System.out.print("Rating (float): ");
+                    float rating = sc.nextFloat();
+                    sc.nextLine(); // Consume leftover newline character
+
+                    System.out.print("Gender: ");
+                    String gender = sc.nextLine();
+
+                    System.out.print("MBTI: ");
+                    String mbti = sc.nextLine();
+
+                    System.out.print("Height (float): ");
+                    float height = sc.nextFloat();
+                    sc.nextLine(); // Consume leftover newline character
+
+                    System.out.print("Weight (float): ");
+                    float weight = sc.nextFloat();
+                    sc.nextLine(); // Consume leftover newline character
+
+                    ProfileVO vo = new ProfileVO(nickname, rating, gender, mbti, height, weight);
+                    profile.saveProfile(db, vo);
                     break;
-                case 2://취미입력
-                	
-                	int generatedProfileId = profile.getGeneratedProfileId(db);
-                    System.out.println("생성된 user_profile_id: " + generatedProfileId);
-                    List<HobbyVO> hobbies = List.of(
-                        new HobbyVO("요리"),
-                        new HobbyVO("독서")
-                    );
-                    Profile.saveHobbiesToDatabase(db, generatedProfileId, hobbies);
+
+                case 2: // 취미 입력
+                    System.out.print("Nickname for hobbies: ");
+                    String nicknameForHobbies = sc.nextLine();
+
+                    int userProfileId = profile.getGeneratedProfileIdByNickname(db, nicknameForHobbies);
+
+                    if (userProfileId == 0) {
+                        System.out.println("해당 Nickname으로 프로필을 찾을 수 없습니다.");
+                        break;
+                    }
+
+                    System.out.print("취미를 입력하세요 (쉼표로 구분): ");
+                    String hobbiesInput = sc.nextLine();
+                    List<String> hobbies = new ArrayList<>();
+                    for (String hobby : hobbiesInput.split(",")) {
+                        hobbies.add(hobby.trim());
+                    }
+
+                    Profile.saveHobbies(db, userProfileId, hobbies);
                     break;
                 case 3://유튜브 입력
                     sql = "";
@@ -40,7 +76,6 @@ public class Main {
                     break;
                 case 4://선호타입입력
                 	Scanner scanner = new Scanner(System.in);
-
                 	System.out.print("이름을 입력하세요 : ");
                 	String name = scanner.nextLine();
                 	System.out.print("선호하는 mbti를 입력하세요 : ");
@@ -53,7 +88,6 @@ public class Main {
                     float minWeight = scanner.nextFloat();
                     System.out.print("선호하는 최대 몸무게를 입력하세요 : ");
                     float maxWeight = scanner.nextFloat();
-               
                     System.out.print("선호하는 취미를 입력하세요 : ");
                     scanner.nextLine();
                     String preferredHobbies = scanner.nextLine();
@@ -61,13 +95,15 @@ public class Main {
                     break;
 
                 case 5://매칭상대조회
-                    sql = "select * from user";
-                    db.selectExecute(sql);
+                    System.out.print("조회할 유저이름:");
+                    String name = sc.nextLine();
+                    System.out.println(name);
+                    match.searchMatching(name,db);
                     break;
                 default:
                     System.out.println("유효한 명령어를 입력하세요.");
             }
         }
-
+        sc.close();
     }
 }

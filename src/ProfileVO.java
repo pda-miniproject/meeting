@@ -1,4 +1,4 @@
-class ProfileDTO {
+class ProfileVO {
     private String userId;
     private String nickname;
     private float rating;
@@ -7,18 +7,13 @@ class ProfileDTO {
     private float height;
     private float weight;
 
-    public ProfileDTO(String userId, String nickname, float rating, String gender, String mbti, float height, float weight) {
-        this.userId = userId;
+    public ProfileVO( String nickname, float rating, String gender, String mbti, float height, float weight) {
         this.nickname = nickname;
         this.rating = rating;
         this.gender = gender;
         this.mbti = mbti;
         this.height = height;
         this.weight = weight;
-    }
-
-    public String getUserId() {
-        return userId;
     }
 
     public String getNickname() {
