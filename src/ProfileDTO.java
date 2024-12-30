@@ -1,29 +1,47 @@
-// ProfileDTO.java
-public class ProfileDTO {
-    public String userProfileId;
-    public String userId;
-    public String collegeId;
-    public String majorId;
-    public String nickname;
-    public float rating;
-    public String gender;
-    public String mbti;
-    public float height;
-    public float weight;
-    public String hobbyId;
+class ProfileDTO {
+    private String userId;
+    private String nickname;
+    private float rating;
+    private String gender;
+    private String mbti;
+    private float height;
+    private float weight;
 
-    // Constructor
-    public ProfileDTO(String userProfileId, String userId, String collegeId, String majorId, String nickname, float rating, String gender, String mbti, float height, float weight, String hobbyId) {
-        this.userProfileId = userProfileId;
+    public ProfileDTO(String userId, String nickname, float rating, String gender, String mbti, float height, float weight) {
         this.userId = userId;
-        this.collegeId = collegeId;
-        this.majorId = majorId;
         this.nickname = nickname;
         this.rating = rating;
         this.gender = gender;
         this.mbti = mbti;
         this.height = height;
         this.weight = weight;
-        this.hobbyId = hobbyId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public String getMbti() {
+        return mbti;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getWeight() {
+        return weight;
     }
 }
