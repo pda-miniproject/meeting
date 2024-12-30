@@ -56,9 +56,12 @@ public class ConnectDB {
             System.out.println("Database connected successfully!");
 
             while (resultSet.next()) {
-                // 유저 출력 (필드명에 맞게 수정해야댐)
                 System.out.println("User ID: " + resultSet.getInt("user_id"));
-                System.out.println("Phone: " + resultSet.getString("phone"));
+                System.out.println("Nickname: " + resultSet.getString("nickname"));
+                System.out.println("Height: " + resultSet.getDouble("height"));
+                System.out.println("Weight: " + resultSet.getDouble("weight"));
+                System.out.println("MBTI: " + resultSet.getString("mbti"));
+                System.out.println("----------------------------");
             }
 
         } catch (Exception e) {
