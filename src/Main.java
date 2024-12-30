@@ -12,6 +12,7 @@ public class Main {
         ProfileDTO profileDTO = new ProfileDTO("1", "권은비", 60, "Female", "ENFP", 165.0f, 60.0f);
         YouTubeSubscription youTubeSubscription = new YouTubeSubscription();
         Profile profile = new Profile();
+        Match match = new Match();
 
         while(true) {
             System.out.println("1: 프로필입력 2: 취미입력 3: 유튜브입력 4: 선호타입입력 5: 매칭상대 조회 6: 종료");
@@ -71,14 +72,7 @@ public class Main {
 	                break;
                 case 3://유튜브 입력
                     sql = "";
-                    sc.nextLine(); // 버퍼에 남아 있는 개행 문자 제거
-                    System.out.print("이름입력: ");
-                    String name = sc.nextLine();
-
-                    System.out.print("유튜브 이름: ");
-                    String channel = sc.nextLine();
-                    youTubeSubscription.addYoutubeSubscription(name,channel,db);
-
+                    db.insertExecute(sql);
                     break;
                 case 4://선호타입입력
                     sql = "";
@@ -86,8 +80,10 @@ public class Main {
                     break;
 
                 case 5://매칭상대조회
-                    sql = "select * from user";
-                    db.selectExecute(sql);
+                    System.out.print("조회할 유저이름:");
+                    String name = sc.nextLine();
+                    System.out.println(name);
+                    match.searchMatching(name,db);
                     break;
                 default:
                     System.out.println("유효한 명령어를 입력하세요.");
