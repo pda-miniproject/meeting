@@ -11,7 +11,7 @@ public class ConnectDB {
     /**
      * db커넥션 메서드
      */
-    public Connection getConnection() throws Exception {
+    private Connection getConnection() throws Exception {
         Properties properties = new Properties();
         InputStream inputStream = ConnectDB.class.getResourceAsStream("/db_credentials.properties");
         if (inputStream == null) {
@@ -66,10 +66,30 @@ public class ConnectDB {
         }
     }
     
-    public ResultSet selectExecuteWithResult(String sql) throws Exception {
-        Connection connection = getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        return preparedStatement.executeQuery();
+    public ResultSet selectExecuteWithResult(String sql) {
+        try {
+            Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            return preparedStatement.executeQuery();
+        } catch (Exception e) {
+            System.err.println("Error during select: " + e.getMessage());
+            return null;
+        }
     }
 
+
+    public int insertExecuteWithGeneratedKeys(String sql) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.executeUpdate();
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error during insert with generated keys: " + e.getMessage());
+        }
+        return 0;
+    }
 }
