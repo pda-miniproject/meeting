@@ -51,7 +51,7 @@ CREATE TABLE `Major` (
 
 CREATE TABLE `Profile` (
                            `user_profile_id` INTEGER NOT NULL AUTO_INCREMENT,
-                           `user_id` INTEGER NOT NULL,
+                           `user_id` INTEGER NULL,
                            `college_id` INTEGER NULL,
                            `major_id` INTEGER NULL,
                            `nickname` VARCHAR(20) NOT NULL,
